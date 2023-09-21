@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        /* Estilo para ocultar un formulario por defecto */
+        #formulario1 {
+            display: none;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Login Admin/Médico</title>
+
+</head>
+<body>
+<div style="position:absolute;
+top: 50%;
+left: 25%;
+height:400px;
+width:600px;
+margin-top:-200px;">
+
+
+    <h1 style="margin-top: 50px; text-align: center; margin-bottom: 30px">Iniciar Sesión</h1>
+    <div style="text-align: center;margin: auto; width: 400px;">
+        <input onclick="cambiarColorBorde(this)"  class="btn btn-light" type="submit" name="loginAdmin" id="mostrarFormulario1" value="Administrador"/>
+        <input onclick="cambiarColorBorde(this)"  class="btn btn-light" type="submit" name="loginAdmin" id="mostrarFormulario2" value="Médico"/>
+    </div>
+<!-- Formulario 1 -->
+    <div class="d-grid gap-2 d-md-block mb-3" style="text-align: center;margin: auto; width: 400px;margin-top: 40px">
+        <div  id="formulario1" style="border: 2px solid rgba(0,0,0,0.06);border-radius: 10px; padding: 20px;">
+            <form style="text-align: center;" th:action="@{/loginAfiliado}" method="post">
+                <label for="Email">Email</label>
+                <input type="text" name="Email" id="Email" required class="form-control"/>
+
+                <label for="contrasenaAdmin">Contraseña</label>
+                <input type="text" name="Contrasena" id="contrasenaAdmin" required class="form-control"/>
+
+                <div style="margin-top: 10px;">
+                    <input style="border-radius: 20px;" class="btn btn-primary" type="submit" name="login" id="loginAdmin" value="Iniciar Sesión"/>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+<div class="d-grid gap-2 d-md-block mb-3" style="text-align: center;margin: auto; width: 400px;">
+    <div  id="formulario2" style="border: 2px solid rgba(0,0,0,0.06);border-radius: 10px; padding: 20px;">
+        <form style="text-align: center;" th:action="@{/loginAfiliado}" method="post">
+            <label for="cedula">Numero de Identificación</label>
+            <input type="text" name="cedula" id="cedula" required class="form-control"/>
+
+            <label for="contrasena">Contraseña</label>
+            <input type="text" name="Contrasena" id="contrasena" required class="form-control"/>
+
+            <div style="margin-top: 10px;">
+                <input style="border-radius: 20px;" class="btn btn-primary" type="submit" name="login" id="loginAfiliado" value="Iniciar Sesión"/>
+            </div>
+
+
+        </form>
+    </div>
+</div>
+
+<script>
+    // Obtener referencias a los botones y formularios
+    const botonMostrarFormulario1 = document.getElementById('mostrarFormulario1');
+    const botonMostrarFormulario2 = document.getElementById('mostrarFormulario2');
+    const formulario1 = document.getElementById('formulario1');
+    const formulario2 = document.getElementById('formulario2');
+
+    // Agregar eventos de clic a los botones
+    botonMostrarFormulario1.addEventListener('click', () => {
+        formulario1.style.display = 'block';
+        formulario2.style.display = 'none';
+    });
+
+    botonMostrarFormulario2.addEventListener('click', () => {
+        formulario1.style.display = 'none';
+        formulario2.style.display = 'block';
+    });
+
+</script>
+    <style>
+        .elemento-con-borde {
+            padding: 10px;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        let botonSeleccionado = null; // Almacena el botón previamente seleccionado
+
+        function cambiarColorBorde(elemento) {
+            if (botonSeleccionado !== null) {
+                botonSeleccionado.style.borderBottom = '2px solid transparent'; // Restablece el estilo del botón anterior
+            }
+
+            elemento.style.borderBottom = '2px solid #007bff'; // Cambia el color del borde inferior del botón actual
+            botonSeleccionado = elemento; // Almacena el botón actual como el seleccionado
+        }
+    </script>
+</div>
+</body>
+</html>
