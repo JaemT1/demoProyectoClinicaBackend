@@ -3,8 +3,10 @@ package com.uniquindio.software.clinica.controladores;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.api.ApiResponse;
 import com.cloudinary.utils.ObjectUtils;
+import com.uniquindio.software.clinica.modelo.EPS;
 import com.uniquindio.software.clinica.modelo.Paciente;
 import com.uniquindio.software.clinica.modelo.Usuario;
+import com.uniquindio.software.clinica.repositorios.IEPSDao;
 import com.uniquindio.software.clinica.servicios.implementaciones.PacienteServiceImpl;
 import com.uniquindio.software.clinica.servicios.implementaciones.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import java.io.File;
 import java.util.List;
 @RestController
 @RequestMapping("/usuarios")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ControladorGestionUsuarios {
     //--------------------------------Endpoints de los Usuarios--------------------------------
     @Autowired
@@ -90,7 +92,16 @@ public class ControladorGestionUsuarios {
         return ResponseEntity.ok(pacienteActualizado);
     }
     //----------------------------------------------------------------------------------------------
+    //--------------------------------Endpoints de las EPS------------------------------------------
+    @Autowired
+    private IEPSDao epsService;
 
+    @PostMapping("/gestion/eps")
+    public EPS guardarEps(@RequestBody EPS eps){return epsService.save(eps);}
+
+    @GetMapping("/gestion/eps")
+    public List<EPS> listarEps(){return (List<EPS>)epsService.findAll();}
+    //----------------------------------------------------------------------------------------------
     //--------------------------------Subir y obtener imagen de Cloudinary--------------------------------
     public void includesForUploadFiles(File foto, String cedula) throws Exception {
         Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
