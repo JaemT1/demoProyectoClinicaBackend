@@ -12,10 +12,13 @@ import com.uniquindio.software.clinica.servicios.implementaciones.UsuarioService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/usuarios")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -67,7 +70,8 @@ public class ControladorGestionUsuarios {
     }
 
     @PostMapping("/gestion/pacientes")
-    public Paciente guardarPaciente(@RequestBody Paciente paciente){return pacienteService.guardar(paciente);}
+    public Paciente guardarPaciente(@RequestBody Paciente paciente) {
+        return pacienteService.guardar(paciente);}
 
     @DeleteMapping("/gestion/pacientes")
     public void borrarPaciente(@RequestBody Paciente paciente){ pacienteService.eliminar(paciente);}
@@ -81,13 +85,10 @@ public class ControladorGestionUsuarios {
     @PutMapping("/gestion/pacientes/{cedula}")
     public ResponseEntity<Paciente>actualizarPaciente(@PathVariable String cedula, @RequestBody Paciente detallesPaciente) throws Exception {
         Paciente paciente = pacienteService.buscarPorCedula(cedula);
-
-
-        paciente.setFechaNacimiento(detallesPaciente.getFechaNacimiento());
+        paciente.setFecha_nacimiento(detallesPaciente.getFecha_nacimiento());
         paciente.setAlergias(detallesPaciente.getAlergias());
         paciente.setEps(detallesPaciente.getEps());
-        paciente.setTipoSangre(detallesPaciente.getTipoSangre());
-
+        paciente.setTipo_sangre(detallesPaciente.getTipo_sangre());
         Paciente pacienteActualizado = pacienteService.guardar(paciente);
         return ResponseEntity.ok(pacienteActualizado);
     }
@@ -102,20 +103,5 @@ public class ControladorGestionUsuarios {
     @GetMapping("/gestion/eps")
     public List<EPS> listarEps(){return (List<EPS>)epsService.findAll();}
     //----------------------------------------------------------------------------------------------
-    //--------------------------------Subir y obtener imagen de Cloudinary--------------------------------
-    public void includesForUploadFiles(File foto, String cedula) throws Exception {
-        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "dkm9g0zpt",
-                "api_key", "654495213436479",
-                "api_secret", "PIJO3ukm6rEsZFGjOIK7gcVDV-g"));
-        cloudinary.uploader().upload(foto,
-                ObjectUtils.asMap("public_id", cedula));
 
-        //Ejemplos
-        ApiResponse result = cloudinary.api().resource("r34", ObjectUtils.emptyMap());
-        ApiResponse result2 = cloudinary.api().resource("la roca chiquito", ObjectUtils.emptyMap());
-        System.out.println(result.get("url"));
-        System.out.println(result2.get("url"));
-    }
-    //----------------------------------------------------------------------------------------------
 }

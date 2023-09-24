@@ -1,11 +1,9 @@
 package com.uniquindio.software.clinica.modelo;
-import jakarta.annotation.Nonnull;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.io.File;
 
 @Data
 @Entity
@@ -19,4 +17,5 @@ public class Usuario {
     private String email;
     private String telefono;
     private String ciudad;
+    private String url_foto;
 }

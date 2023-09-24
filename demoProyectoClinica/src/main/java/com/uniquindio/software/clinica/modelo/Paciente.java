@@ -12,9 +12,9 @@ import java.sql.Date;
 public class Paciente {
     @Id
     @EqualsAndHashCode.Include
-    private String cedulaPaciente;
-    private Date fechaNacimiento;
+    private String cedula_usuario;
+    private Date fecha_nacimiento;
     private String alergias;
     private String eps;
-    private TipoSangre tipoSangre;
+    private String tipo_sangre;
 }
