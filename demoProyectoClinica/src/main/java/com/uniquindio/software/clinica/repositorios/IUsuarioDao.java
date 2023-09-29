@@ -9,4 +9,11 @@ import java.util.List;
 
 @Repository
 public interface IUsuarioDao extends CrudRepository<Usuario,String> {
+
+    @Query("SELECT u,p FROM Usuario u JOIN Paciente p ON u.cedula = p.cedula_usuario")
+    List<Object[]> obtenerUsuariosYPacientes();
+    @Query("SELECT contrasena FROM Usuario WHERE email = ?1")
+    String obtenerContrasena(String correo);
+
+
 }

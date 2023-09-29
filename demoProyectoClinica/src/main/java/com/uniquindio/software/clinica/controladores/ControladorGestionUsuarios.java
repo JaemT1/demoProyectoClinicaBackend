@@ -1,8 +1,5 @@
 package com.uniquindio.software.clinica.controladores;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.api.ApiResponse;
-import com.cloudinary.utils.ObjectUtils;
 import com.uniquindio.software.clinica.modelo.EPS;
 import com.uniquindio.software.clinica.modelo.Paciente;
 import com.uniquindio.software.clinica.modelo.Usuario;
@@ -10,26 +7,40 @@ import com.uniquindio.software.clinica.repositorios.IEPSDao;
 import com.uniquindio.software.clinica.servicios.implementaciones.PacienteServiceImpl;
 import com.uniquindio.software.clinica.servicios.implementaciones.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-
-import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/usuarios")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ControladorGestionUsuarios {
     //--------------------------------Endpoints de los Usuarios--------------------------------
+
     @Autowired
     private UsuarioServiceImpl usuarioService;
 
     @GetMapping("/gestion")
     public List<Usuario> listarUsuarios(){
         return usuarioService.listarUsuarios();
+    }
+
+    @GetMapping("/gestion/login/IJUP")
+    public List<Object[]> listarUsuariosYPacientes(){
+        return usuarioService.obtenerUsuariosYPacientes();
+    }
+
+    @GetMapping("/gestion/login")
+    public ResponseEntity<String> verificiarContrasena(){
+        // Cifra la contraseña ingresada por el usuario y compárala con la almacenada en la base de datos
+        if (usuarioService.verificarContrasena("juan@gmail.com", "puedeser")) {
+            return ResponseEntity.ok("Inicio de sesión exitoso");
+        } else {
+            // Contraseña incorrecta, deniega el acceso
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
+        }
     }
 
     @PostMapping("/gestion")

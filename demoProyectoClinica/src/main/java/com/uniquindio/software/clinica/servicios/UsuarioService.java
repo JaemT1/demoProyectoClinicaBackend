@@ -9,4 +9,6 @@ public interface UsuarioService {
     Usuario guardar(Usuario usuario);
     void eliminar(Usuario usuario);
     Usuario buscarPorCedula(String cedula)throws Exception;
+    List<Object[]> obtenerUsuariosYPacientes();
+    String obtenerContrasena(String correo);
 }
