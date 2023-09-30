@@ -4,8 +4,6 @@ import com.uniquindio.software.clinica.modelo.Usuario;
 import com.uniquindio.software.clinica.repositorios.IUsuarioDao;
 import com.uniquindio.software.clinica.servicios.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,15 +50,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
     @Override
     @Transactional(readOnly = true)
-    public String obtenerContrasena(String email) {
-        return usuarioDao.obtenerContrasena(email);
+    public String obtenerContrasena(String cedula) {
+        return usuarioDao.obtenerContrasenaMedPac(cedula);
     }
-
-    public boolean verificarContrasena(String email, String contrasenaAVerificar) {
-        String storedPasswordHash = usuarioDao.obtenerContrasena(email);
-        // Contraseña válida, permite el acceso
-        // Contraseña incorrecta, deniega el acceso
+    public boolean verificarContrasenaMedPac(String cedula, String contrasenaAVerificar) {
+        String storedPasswordHash = usuarioDao.obtenerContrasenaMedPac(cedula);
         return passwordEncoder.matches(contrasenaAVerificar, storedPasswordHash);
     }
-
+    public boolean verificarContrasenaAdmin(String correo, String contrasenaAVerificar) {
+        String storedPasswordHash = usuarioDao.obtenerContrasenaAdmin(correo);
+        return passwordEncoder.matches(contrasenaAVerificar, storedPasswordHash);
+    }
 }

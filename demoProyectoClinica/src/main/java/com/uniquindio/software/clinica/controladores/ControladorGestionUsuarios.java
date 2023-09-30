@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -32,10 +33,23 @@ public class ControladorGestionUsuarios {
         return usuarioService.obtenerUsuariosYPacientes();
     }
 
-    @GetMapping("/gestion/login")
-    public ResponseEntity<String> verificiarContrasena(){
-        // Cifra la contraseña ingresada por el usuario y compárala con la almacenada en la base de datos
-        if (usuarioService.verificarContrasena("juan@gmail.com", "puedeser")) {
+    @PostMapping ("/gestion/login/medpac")
+    public ResponseEntity<String> verificarLoginMedPac(@RequestBody Map<String, Object> loginData){
+        String cedula = (String) loginData.get("cedula");
+        String contrasenaAVerificar = (String) loginData.get("password");
+        if (usuarioService.verificarContrasenaMedPac(cedula, contrasenaAVerificar)) {
+            return ResponseEntity.ok("Inicio de sesión exitoso");
+        } else {
+            // Contraseña incorrecta, deniega el acceso
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
+        }
+    }
+
+    @PostMapping ("/gestion/login/admin")
+    public ResponseEntity<String> verificarLoginAdmin(@RequestBody Map<String, Object> loginData){
+        String correo = (String) loginData.get("email");
+        String contrasenaAVerificar = (String) loginData.get("password_admin");
+        if (usuarioService.verificarContrasenaAdmin(correo, contrasenaAVerificar)) {
             return ResponseEntity.ok("Inicio de sesión exitoso");
         } else {
             // Contraseña incorrecta, deniega el acceso
@@ -104,6 +118,7 @@ public class ControladorGestionUsuarios {
         return ResponseEntity.ok(pacienteActualizado);
     }
     //----------------------------------------------------------------------------------------------
+
     //--------------------------------Endpoints de las EPS------------------------------------------
     @Autowired
     private IEPSDao epsService;
@@ -114,5 +129,4 @@ public class ControladorGestionUsuarios {
     @GetMapping("/gestion/eps")
     public List<EPS> listarEps(){return (List<EPS>)epsService.findAll();}
     //----------------------------------------------------------------------------------------------
-
 }

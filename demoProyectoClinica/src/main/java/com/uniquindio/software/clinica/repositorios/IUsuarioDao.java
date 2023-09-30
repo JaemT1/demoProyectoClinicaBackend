@@ -12,8 +12,8 @@ public interface IUsuarioDao extends CrudRepository<Usuario,String> {
 
     @Query("SELECT u,p FROM Usuario u JOIN Paciente p ON u.cedula = p.cedula_usuario")
     List<Object[]> obtenerUsuariosYPacientes();
-    @Query("SELECT contrasena FROM Usuario WHERE email = ?1")
-    String obtenerContrasena(String correo);
-
-
+    @Query("SELECT contrasena FROM Usuario WHERE cedula = ?1")
+    String obtenerContrasenaMedPac(String cedula);
+    @Query("SELECT contrasena FROM Administrador WHERE email = ?1")
+    String obtenerContrasenaAdmin(String email);
 }
