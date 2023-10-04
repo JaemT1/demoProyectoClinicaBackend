@@ -9,6 +9,7 @@ public interface UsuarioService {
     Usuario guardar(Usuario usuario);
     void eliminar(Usuario usuario);
     Usuario buscarPorCedula(String cedula)throws Exception;
-    List<Object[]> obtenerUsuariosYPacientes();
+    List<Object[]> obtenerUsuariosYPacientes(String cedula);
     String obtenerContrasena(String cedula);
+    List<Object[]> obtenerMedicos(String cedula);
 }

@@ -12,5 +12,5 @@ import lombok.EqualsAndHashCode;
 public class Medico {
    @Id
    @EqualsAndHashCode.Include
-    private String cedulaMedico;
+    private String cedula_usuario;
 }

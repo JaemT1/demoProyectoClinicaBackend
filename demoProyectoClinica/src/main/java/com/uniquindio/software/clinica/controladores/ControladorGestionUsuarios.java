@@ -1,5 +1,6 @@
 package com.uniquindio.software.clinica.controladores;
 
+import com.uniquindio.software.clinica.modelo.Administrador;
 import com.uniquindio.software.clinica.modelo.EPS;
 import com.uniquindio.software.clinica.modelo.Paciente;
 import com.uniquindio.software.clinica.modelo.Usuario;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,31 +31,60 @@ public class ControladorGestionUsuarios {
     }
 
     @GetMapping("/gestion/login/IJUP")
-    public List<Object[]> listarUsuariosYPacientes(){
-        return usuarioService.obtenerUsuariosYPacientes();
+    public List<Object[]> listarUsuariosYPacientes(String cedula){
+        return usuarioService.obtenerUsuariosYPacientes(cedula);
     }
 
-    @PostMapping ("/gestion/login/medpac")
-    public ResponseEntity<String> verificarLoginMedPac(@RequestBody Map<String, Object> loginData){
+    @PostMapping ("/gestion/login/paciente")
+    public ResponseEntity<Map<String, Object>> verificarLoginPaciente(@RequestBody Map<String, Object> loginData){
         String cedula = (String) loginData.get("cedula");
         String contrasenaAVerificar = (String) loginData.get("password");
         if (usuarioService.verificarContrasenaMedPac(cedula, contrasenaAVerificar)) {
-            return ResponseEntity.ok("Inicio de sesión exitoso");
+            Map<String, Object> response = new HashMap<>();
+            List<Object[]> datosJoin = usuarioService.obtenerUsuariosYPacientes(cedula);
+            response.put("message", "Inicio de sesión exitoso");
+            response.put("userType", "paciente");
+            response.put("userData", datosJoin);
+            return ResponseEntity.ok(response);
         } else {
             // Contraseña incorrecta, deniega el acceso
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 
-    @PostMapping ("/gestion/login/admin")
-    public ResponseEntity<String> verificarLoginAdmin(@RequestBody Map<String, Object> loginData){
-        String correo = (String) loginData.get("email");
-        String contrasenaAVerificar = (String) loginData.get("password_admin");
-        if (usuarioService.verificarContrasenaAdmin(correo, contrasenaAVerificar)) {
-            return ResponseEntity.ok("Inicio de sesión exitoso");
+    @PostMapping ("/gestion/login/medico")
+    public ResponseEntity<Map<String, Object>> verificarLoginMedico(@RequestBody Map<String, Object> loginData){
+        String cedula = (String) loginData.get("codigoMedico");
+        String contrasenaAVerificar = (String) loginData.get("passwordMedico");
+        if (usuarioService.verificarContrasenaMedPac(cedula, contrasenaAVerificar)) {
+            Map<String, Object> response = new HashMap<>();
+            List<Object[]> datosJoin = usuarioService.obtenerMedicos(cedula);
+            response.put("message", "Inicio de sesión exitoso");
+            response.put("userType", "medico");
+            response.put("userData", datosJoin);
+            return ResponseEntity.ok(response);
         } else {
             // Contraseña incorrecta, deniega el acceso
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
+
+
+
+    @PostMapping ("/gestion/login/admin")
+    public ResponseEntity<Map<String, Object>> verificarLoginAdmin(@RequestBody Map<String, Object> loginData){
+        String correo = (String) loginData.get("email");
+        String contrasenaAVerificar = (String) loginData.get("password_admin");
+        Map<String, Object> response = new HashMap<>();
+        Administrador admin = usuarioService.obtenerAdminPorCorreo(correo);
+        response.put("message", "Inicio de sesión exitoso");
+        response.put("userType", "admin");
+        response.put("adminData", admin);
+        if (usuarioService.verificarContrasenaAdmin(correo, contrasenaAVerificar)) {
+            return ResponseEntity.ok(response);
+        } else {
+            // Contraseña incorrecta, deniega el acceso
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 

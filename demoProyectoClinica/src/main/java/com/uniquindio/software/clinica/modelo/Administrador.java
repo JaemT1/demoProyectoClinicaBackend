@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 public class Administrador {
     @Id
     @EqualsAndHashCode.Include
-    private int idAdministrador;
+    private int idadministrador;
     private String email;
     private String contrasena;
 
