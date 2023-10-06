@@ -12,4 +12,6 @@ public interface UsuarioService {
     List<Object[]> obtenerUsuariosYPacientes(String cedula);
     String obtenerContrasena(String cedula);
     List<Object[]> obtenerMedicos(String cedula);
+    String obtenerCorreoRP(String cedula);
+    void cambiarContrasena(String newPassword, String cedula);
 }

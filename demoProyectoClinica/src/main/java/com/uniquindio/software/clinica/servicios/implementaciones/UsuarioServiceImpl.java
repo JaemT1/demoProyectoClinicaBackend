@@ -5,6 +5,7 @@ import com.uniquindio.software.clinica.modelo.Usuario;
 import com.uniquindio.software.clinica.repositorios.IUsuarioDao;
 import com.uniquindio.software.clinica.servicios.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Administrador obtenerAdminPorCorreo(String correo) {
         return usuarioDao.obtenerAdminPorCorreo(correo);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String obtenerCorreoRP(String cedula) {
+        return usuarioDao.obtenerCorreoRP(cedula);
+    }
+
+    @Override
+    @Transactional
+    public void cambiarContrasena(String newPassword, String cedula) {usuarioDao.cambiarContrasena(newPassword, cedula);}
 
     public boolean verificarContrasenaMedPac(String cedula, String contrasenaAVerificar) {
         String storedPasswordHash = usuarioDao.obtenerContrasenaMedPac(cedula);

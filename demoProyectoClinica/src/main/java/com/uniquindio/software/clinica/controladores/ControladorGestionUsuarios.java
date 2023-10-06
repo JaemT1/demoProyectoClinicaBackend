@@ -7,32 +7,64 @@ import com.uniquindio.software.clinica.modelo.Usuario;
 import com.uniquindio.software.clinica.repositorios.IEPSDao;
 import com.uniquindio.software.clinica.servicios.implementaciones.PacienteServiceImpl;
 import com.uniquindio.software.clinica.servicios.implementaciones.UsuarioServiceImpl;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/usuarios")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ControladorGestionUsuarios {
-    //--------------------------------Endpoints de los Usuarios--------------------------------
+    public String CODIGO_GENERADO_RP = "";
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Autowired
     private UsuarioServiceImpl usuarioService;
 
+    //--------------------------------Endpoints de los Usuarios--------------------------------
     @GetMapping("/gestion")
     public List<Usuario> listarUsuarios(){
         return usuarioService.listarUsuarios();
     }
 
-    @GetMapping("/gestion/login/IJUP")
-    public List<Object[]> listarUsuariosYPacientes(String cedula){
-        return usuarioService.obtenerUsuariosYPacientes(cedula);
+    @PostMapping("/gestion")
+    public Usuario guardarUsuario(@RequestBody Usuario usuario){return usuarioService.guardar(usuario);}
+
+    @DeleteMapping("/gestion")
+    public void borrarUsuario(@RequestBody Usuario usuario){ usuarioService.eliminar(usuario);}
+
+    @GetMapping("/gestion/{cedula}")
+    public ResponseEntity<Usuario>obtenerUsuarioPorCedula(@PathVariable String cedula) throws Exception {
+        Usuario usuario = usuarioService.buscarPorCedula(cedula);
+        return ResponseEntity.ok(usuario);
+    }
+
+    @PutMapping("/gestion/{cedula}")
+    public ResponseEntity<Usuario>actualizarUsuario(@PathVariable String cedula, @RequestBody Usuario detallesUsuario) throws Exception {
+        Usuario usuario = usuarioService.buscarPorCedula(cedula);
+
+        usuario.setCedula(detallesUsuario.getCedula());
+        usuario.setNombre(detallesUsuario.getNombre());
+        usuario.setEmail(detallesUsuario.getEmail());
+        usuario.setContrasena(detallesUsuario.getContrasena());
+        usuario.setTelefono(detallesUsuario.getTelefono());
+        usuario.setCiudad(detallesUsuario.getCiudad());
+
+        Usuario usuarioActualizado = usuarioService.guardar(usuario);
+        return ResponseEntity.ok(usuarioActualizado);
     }
 
     @PostMapping ("/gestion/login/paciente")
@@ -69,8 +101,6 @@ public class ControladorGestionUsuarios {
         }
     }
 
-
-
     @PostMapping ("/gestion/login/admin")
     public ResponseEntity<Map<String, Object>> verificarLoginAdmin(@RequestBody Map<String, Object> loginData){
         String correo = (String) loginData.get("email");
@@ -88,32 +118,66 @@ public class ControladorGestionUsuarios {
         }
     }
 
-    @PostMapping("/gestion")
-    public Usuario guardarUsuario(@RequestBody Usuario usuario){return usuarioService.guardar(usuario);}
+    @PostMapping ("/gestion/login/recuperarContrasena")
+    public ResponseEntity<String> obtenerCorreo(@RequestBody Map<String, Object> loginData) throws MessagingException {
+        String cedula = (String) loginData.get("cedula");
+        String correoBD = usuarioService.obtenerCorreoRP(cedula);
 
-    @DeleteMapping("/gestion")
-    public void borrarUsuario(@RequestBody Usuario usuario){ usuarioService.eliminar(usuario);}
-
-    @GetMapping("/gestion/{cedula}")
-    public ResponseEntity<Usuario>obtenerUsuarioPorCedula(@PathVariable String cedula) throws Exception {
-        Usuario usuario = usuarioService.buscarPorCedula(cedula);
-        return ResponseEntity.ok(usuario);
+        if (correoBD != null) {
+            int codigoVerificacion = generarCodigoVerificacion(6);
+            enviarCorreoCV(correoBD, codigoVerificacion);
+            return ResponseEntity.ok("Correo Enviado");
+        } else {
+            // Cedula incorrecta, no existe el afiliado
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No existe el usuario");
+        }
     }
 
-    @PutMapping("/gestion/{cedula}")
-    public ResponseEntity<Usuario>actualizarUsuario(@PathVariable String cedula, @RequestBody Usuario detallesUsuario) throws Exception {
-        Usuario usuario = usuarioService.buscarPorCedula(cedula);
+    @PostMapping ("/gestion/login/cambiarContrasena")
+    public ResponseEntity<String> cambiarContraseña(@RequestBody Map<String, Object> loginData) throws MessagingException {
+        String codigo = (String) loginData.get("verificationCode");
+        String contrasena = (String) loginData.get("passwordToSend");
+        String cedula = (String) loginData.get("cedula");
 
-        usuario.setCedula(detallesUsuario.getCedula());
-        usuario.setNombre(detallesUsuario.getNombre());
-        usuario.setEmail(detallesUsuario.getEmail());
-        usuario.setContrasena(detallesUsuario.getContrasena());
-        usuario.setTelefono(detallesUsuario.getTelefono());
-        usuario.setCiudad(detallesUsuario.getCiudad());
-
-        Usuario usuarioActualizado = usuarioService.guardar(usuario);
-        return ResponseEntity.ok(usuarioActualizado);
+        if (codigo.equals(CODIGO_GENERADO_RP)) {
+            usuarioService.cambiarContrasena(contrasena, cedula);
+            CODIGO_GENERADO_RP = "";
+            return ResponseEntity.ok("Contraseña Cambiada con éxito");
+        } else {
+            // Código digitado incorrecto
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Código incorrecto");
+        }
     }
+
+    @GetMapping("/gestion/login/IJUP")
+    public List<Object[]> listarUsuariosYPacientes(String cedula){
+        return usuarioService.obtenerUsuariosYPacientes(cedula);
+    }
+
+    public int generarCodigoVerificacion(int cantDigitos) {
+        if (cantDigitos < 1) {
+            throw new IllegalArgumentException("El número de dígitos debe ser al menos 1.");
+        }
+
+        int min = (int) Math.pow(10, cantDigitos - 1); // Mínimo valor posible
+        int max = (int) Math.pow(10, cantDigitos) - 1; // Máximo valor posible
+
+        Random random = new Random();
+        int codigoVerificacion = random.nextInt(max - min + 1) + min;
+        CODIGO_GENERADO_RP = String.valueOf(codigoVerificacion);
+        return codigoVerificacion;
+    }
+
+    public void enviarCorreoCV(String correoDestino, int codigoVerificacion) throws MessagingException {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("jclinica0@gmail.com");
+        message.setTo(correoDestino);
+        message.setSubject("Código de Verificación");
+        message.setText("Digite este código en el formulario para continuar con su cambio de contraseña: \n\n" + codigoVerificacion
+                + "\n\nRespetado afiliado, este correo ha sido generado por un sistema de envío; por favor NO responda al mismo ya que no podrá ser gestionado.");
+        mailSender.send(message);
+    }
+
     //----------------------------------------------------------------------------------------------
 
     //--------------------------------Endpoints de los Pacientes--------------------------------

@@ -2,6 +2,7 @@ package com.uniquindio.software.clinica.repositorios;
 
 import com.uniquindio.software.clinica.modelo.Administrador;
 import com.uniquindio.software.clinica.modelo.Usuario;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -21,4 +22,9 @@ public interface IUsuarioDao extends CrudRepository<Usuario,String> {
     Administrador obtenerAdminPorCorreo(String correo);
     @Query("SELECT u,m FROM Usuario u JOIN Medico m ON u.cedula = m.cedula_usuario WHERE u.cedula = ?1")
     List<Object[]> obtenerDatosMedico(String cedula);
+    @Query("SELECT u.email FROM Usuario u  WHERE u.cedula = ?1")
+    String obtenerCorreoRP(String cedula);
+    @Modifying
+    @Query("UPDATE Usuario u SET u.contrasena = ?1 WHERE u.cedula = ?2")
+    void cambiarContrasena(String newPassword, String cedula);
 }
