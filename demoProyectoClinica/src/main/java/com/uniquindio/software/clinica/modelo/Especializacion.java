@@ -15,7 +15,7 @@ public class Especializacion {
         @Id
         @EqualsAndHashCode.Include
 
-        private String idEspecialidad;
+        private String id;
         private String nombre;
 
 }
