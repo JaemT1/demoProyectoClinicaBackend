@@ -13,4 +13,5 @@ public class Medico {
    @Id
    @EqualsAndHashCode.Include
     private String cedula_usuario;
+    private String especializacion;
 }

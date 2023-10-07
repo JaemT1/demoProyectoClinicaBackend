@@ -90,6 +90,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     public boolean verificarContrasenaAdmin(String correo, String contrasenaAVerificar) {
         String storedPasswordHash = usuarioDao.obtenerContrasenaAdmin(correo);
-        return passwordEncoder.matches(contrasenaAVerificar, storedPasswordHash);
+        return passwordEncoder.matches(contrasenaAVerificar,storedPasswordHash);
     }
 }
