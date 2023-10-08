@@ -29,6 +29,9 @@ public class PacienteServiceImpl implements PacienteService {
         return pacienteDao.findById(cedula).orElseThrow(()->new Exception("No existe el usuario con la cedula: " + cedula));
     }
     @Override
+    @Transactional()
+    public void editarPaciente(String alergias, String eps, String cedula) {pacienteDao.editarPaciente(alergias, eps, cedula);}
+    @Override
     @Transactional
     public void eliminar(Paciente paciente) {
         pacienteDao.delete(paciente);

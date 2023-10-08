@@ -52,19 +52,19 @@ public class ControladorGestionUsuarios {
         return ResponseEntity.ok(usuario);
     }
 
-    @PutMapping("/gestion/{cedula}")
-    public ResponseEntity<Usuario>actualizarUsuario(@PathVariable String cedula, @RequestBody Usuario detallesUsuario) throws Exception {
-        Usuario usuario = usuarioService.buscarPorCedula(cedula);
+    @PutMapping("/gestion/editarPaciente")
+    public ResponseEntity<String>actualizarUsuario(@RequestBody Map<String, Object> detallesAEditar) throws Exception {
+        String email = (String)detallesAEditar.get("email");
+        String telefono = (String)detallesAEditar.get("telefono");
+        String url_foto = (String)detallesAEditar.get("url_foto");
+        String alergias = (String)detallesAEditar.get("alergias");
+        String eps = (String)detallesAEditar.get("eps");
+        String cedula = (String)detallesAEditar.get("cedula");
 
-        usuario.setCedula(detallesUsuario.getCedula());
-        usuario.setNombre(detallesUsuario.getNombre());
-        usuario.setEmail(detallesUsuario.getEmail());
-        usuario.setContrasena(detallesUsuario.getContrasena());
-        usuario.setTelefono(detallesUsuario.getTelefono());
-        usuario.setCiudad(detallesUsuario.getCiudad());
+        usuarioService.editarUsuario(email, telefono, url_foto, cedula);
+        pacienteService.editarPaciente(alergias, eps, cedula);
 
-        Usuario usuarioActualizado = usuarioService.guardar(usuario);
-        return ResponseEntity.ok(usuarioActualizado);
+        return ResponseEntity.ok("Usuario Actualizado");
     }
 
     @PostMapping ("/gestion/login/paciente")

@@ -44,4 +44,9 @@ public class MedicoServiceImpl {
     public List<Object[]> obtenerUsuariosYPacientes() {
         return medicoDao.obtenerMedicosYPacientes();
     }
+
+    @Transactional(readOnly = true)
+    public List<Object[]> obtenerMedicosPorEspecializacion(String especializacion) {
+        return medicoDao.obtenerMedicosPorEspecializacion(especializacion);
+    }
 }

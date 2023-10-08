@@ -10,4 +10,5 @@ public interface MedicoService {
     void eliminar(Medico medico);
     Medico buscarPorCedula(String cedula) throws Exception;
     List<Object[]> obtenerUsuariosYPacientes(String cedula);
+    List<Object[]> obtenerMedicosPorEspecializacion(String especializacion);
 }
