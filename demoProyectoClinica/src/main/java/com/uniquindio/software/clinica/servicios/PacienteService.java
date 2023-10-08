@@ -10,5 +10,6 @@ public interface PacienteService {
     Paciente guardar(Paciente paciente);
     void eliminar(Paciente paciente);
     Paciente buscarPorCedula(String cedula)throws Exception;
+    void editarPaciente(String alergias, String eps, String cedula);
 }
 

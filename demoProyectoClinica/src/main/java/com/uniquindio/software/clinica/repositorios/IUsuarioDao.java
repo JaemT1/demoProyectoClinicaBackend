@@ -27,4 +27,7 @@ public interface IUsuarioDao extends CrudRepository<Usuario,String> {
     @Modifying
     @Query("UPDATE Usuario u SET u.contrasena = ?1 WHERE u.cedula = ?2")
     void cambiarContrasena(String newPassword, String cedula);
+    @Modifying
+    @Query("UPDATE Usuario u SET u.email = ?1, u.telefono = ?2, u.url_foto = ?3  WHERE u.cedula = ?4")
+    void editarUsuario(String email, String telefono, String url_foto, String cedula);
 }

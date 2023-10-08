@@ -83,6 +83,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public void cambiarContrasena(String newPassword, String cedula) {usuarioDao.cambiarContrasena(newPassword, cedula);}
 
+    @Override
+    @Transactional()
+    public void editarUsuario(String email, String telefono, String url_foto, String cedula) {usuarioDao.editarUsuario(email,telefono,url_foto,cedula);}
+
     public boolean verificarContrasenaMedPac(String cedula, String contrasenaAVerificar) {
         String storedPasswordHash = usuarioDao.obtenerContrasenaMedPac(cedula);
         return passwordEncoder.matches(contrasenaAVerificar, storedPasswordHash);
