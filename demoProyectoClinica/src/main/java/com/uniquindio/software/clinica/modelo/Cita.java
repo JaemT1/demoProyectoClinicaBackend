@@ -1,13 +1,15 @@
 package com.uniquindio.software.clinica.modelo;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 @Entity
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Cita {
     @Id
@@ -19,4 +21,6 @@ public class Cita {
     private String cedulaPaciente;
     private Estado estado;
     private String motivo;
+
+    public Cita(){}
 }
