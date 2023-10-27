@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalTime;
 import java.util.Date;
 
 @Data
@@ -17,6 +18,7 @@ public class Cita {
     private int idCita;
     private Date fechaCreacion;
     private Date fechaCita;
+    private LocalTime hora;
     private String cedulaMedico;
     private String cedulaPaciente;
     private Estado estado;

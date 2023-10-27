@@ -9,6 +9,6 @@ import org.springframework.cglib.core.Local;
 import com.uniquindio.software.clinica.modelo.Cita;
 
 public interface CitaServicio {
-    List<String> listarCitasProximas(LocalDate fecha, Integer diasPrevios);
+    List<Cita> listarCitasProximas(Date fecha, Integer diasPrevios);
     void enviarCorreosRecordatorio();
 }
