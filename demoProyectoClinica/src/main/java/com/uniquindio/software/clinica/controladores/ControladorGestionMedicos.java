@@ -33,8 +33,7 @@ public class ControladorGestionMedicos {
     }
 
     @GetMapping("/gestion/medicosPorEspecializacion")
-    public ResponseEntity<List<Object[]>> listarMedicosPorEspecializacion(@RequestBody Map<String, Object> especializacionABuscar) {
-        String especializacion = (String) especializacionABuscar.get("especializacion");
+    public ResponseEntity<List<Object[]>> listarMedicosPorEspecializacion(@RequestParam String especializacion) {
         List<Object[]> medicosPorEspecializacion = medicoService.obtenerMedicosPorEspecializacion(especializacion);
         return ResponseEntity.ok(medicosPorEspecializacion);
     }
