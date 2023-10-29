@@ -15,16 +15,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.uniquindio.software.clinica.modelo.Cita;
 import com.uniquindio.software.clinica.modelo.EPS;
-import com.uniquindio.software.clinica.modelo.Estado;
-import com.uniquindio.software.clinica.modelo.Medico;
-import com.uniquindio.software.clinica.modelo.Paciente;
-import com.uniquindio.software.clinica.modelo.Usuario;
+
+
 import com.uniquindio.software.clinica.repositorios.ICitaDao;
 import com.uniquindio.software.clinica.servicios.CitaServicio;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)

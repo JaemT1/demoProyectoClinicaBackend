@@ -1,6 +1,6 @@
 package com.uniquindio.software.clinica.servicios.implementaciones;
 
-import java.util.Date;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,7 +15,16 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import com.uniquindio.software.clinica.modelo.Cita;
+import com.uniquindio.software.clinica.repositorios.ICitaDao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import com.uniquindio.software.clinica.modelo.Cita;
 import com.uniquindio.software.clinica.modelo.Paciente;
 import com.uniquindio.software.clinica.modelo.Usuario;
@@ -61,7 +70,7 @@ public class CitaServiceImpl implements CitaServicio {
         
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        this.listarCitasProximas(new Date(), 3).forEach(
+        this.listarCitasProximas(new Date(System.currentTimeMillis()), 3).forEach(
             cita -> {
                  try {
                     
@@ -72,7 +81,7 @@ public class CitaServiceImpl implements CitaServicio {
                                                             " su proxima cita el dia <strong>%s</strong>, a la(s) <strong>%s</strong>, recuerde que debe"+
                                                             " llegar 20 minutos antes y traer su orden. <br><br>Que tenga buen dia.", 
                                                             usuario.getNombre(), 
-                                                            simpleDateFormat.format( cita.getFechaCita() ), cita.getHora() ), 
+                                                            simpleDateFormat.format( cita.getFechaCita() ), cita.getHoraCita() ), 
                                                usuario.getEmail());
         
         } catch (Exception excp) {
@@ -82,5 +91,29 @@ public class CitaServiceImpl implements CitaServicio {
         );
 
     }   
+
+
+    @Autowired
+    private ICitaDao citaDao;
+    
+    @Transactional(readOnly = true)
+    public List<Cita> listarCitas() {return (ArrayList<Cita>) citaDao.findAll();}
+    
+    @Transactional
+    public Cita guardar(Cita cita) {return citaDao.save(cita);}
+    
+    @Transactional
+    public void eliminar(Cita cita) {citaDao.delete(cita);}
+    
+    @Transactional(readOnly = true)
+    public Cita buscarPorId(int id) throws Exception {
+        return citaDao.findById(id).orElseThrow(() -> new Exception("No existe la cita con el id: " + id));
+    }
+    
+    @Transactional(readOnly = true)
+    public List<Cita> findByFechaCita(Date fecha_cita) {
+        return citaDao.findByFechaCita(fecha_cita);
+    }
+
 
 }
