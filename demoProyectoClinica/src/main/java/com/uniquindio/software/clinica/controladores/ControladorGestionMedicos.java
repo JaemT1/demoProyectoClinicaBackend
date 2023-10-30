@@ -1,6 +1,5 @@
 package com.uniquindio.software.clinica.controladores;
 
-import com.uniquindio.software.clinica.modelo.EPS;
 import com.uniquindio.software.clinica.modelo.Especializacion;
 import com.uniquindio.software.clinica.modelo.Medico;
 import com.uniquindio.software.clinica.modelo.MedicoHasJornada;
@@ -24,7 +23,7 @@ public class ControladorGestionMedicos {
     private MedicoServiceImpl medicoService;
 
     @Autowired
-    private IMedicoHasJornada medicoJornadaRepository;
+    private IMedicoHasJornada medicoHasJornadaDao;
 
     @GetMapping("/gestion")
     public ResponseEntity<List<Object[]>> listarMedicosYPacientes() {
@@ -54,18 +53,12 @@ public class ControladorGestionMedicos {
             int id_jornada = (Integer)scheduleData.get("id_jornada");
             String cedula_medico = (String)scheduleData.get("cedula_medico");
             MedicoHasJornada jornada_medico = new MedicoHasJornada(id_jornada, cedula_medico);
-            medicoJornadaRepository.save(jornada_medico);
+            medicoHasJornadaDao.save(jornada_medico);
             return ResponseEntity.status(HttpStatus.CREATED).body("Horario Añadido");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error añadiendo el horario");
         }
     }
-
-    @Autowired
-    private IEspecializacionDao espService;
-
-    @GetMapping("/especialidades")
-    public List<Especializacion> listarEps(){return (List<Especializacion>)espService.findAll();}
 
     @DeleteMapping("/eliminar")
     public ResponseEntity<String> eliminarMedico(@RequestBody Medico medico) {
@@ -76,5 +69,11 @@ public class ControladorGestionMedicos {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el médico");
         }
     }
+
+    @Autowired
+    private IEspecializacionDao especializacionDao;
+
+    @GetMapping("/especialidades")
+    public List<Especializacion> listarEspecialidades(){return (List<Especializacion>)especializacionDao.findAll();}
 
 }

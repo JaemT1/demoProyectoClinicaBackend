@@ -24,6 +24,8 @@ public interface IUsuarioDao extends CrudRepository<Usuario,String> {
     List<Object[]> obtenerDatosMedico(String cedula);
     @Query("SELECT u.email FROM Usuario u  WHERE u.cedula = ?1")
     String obtenerCorreoRP(String cedula);
+    @Query("SELECT u.nombre FROM Usuario u  WHERE u.cedula = ?1")
+    String obtenerNombreUsuario(String cedula);
     @Modifying
     @Query("UPDATE Usuario u SET u.contrasena = ?1 WHERE u.cedula = ?2")
     void cambiarContrasena(String newPassword, String cedula);

@@ -26,10 +26,6 @@ import java.util.Random;
 @RequestMapping("/usuarios")
 @CrossOrigin(origins = "http://localhost:5173")
 public class ControladorGestionUsuarios {
-    public String CODIGO_GENERADO_RP = "";
-
-    @Autowired
-    private JavaMailSender mailSender;
 
     @Autowired
     private UsuarioServiceImpl usuarioService;
@@ -124,8 +120,8 @@ public class ControladorGestionUsuarios {
         String correoBD = usuarioService.obtenerCorreoRP(cedula);
 
         if (correoBD != null) {
-            int codigoVerificacion = generarCodigoVerificacion(6);
-            enviarCorreoCV(correoBD, codigoVerificacion);
+            int codigoVerificacion = usuarioService.generarCodigoVerificacion(6);
+            usuarioService.enviarCorreoCV(correoBD, codigoVerificacion);
             return ResponseEntity.ok("Correo Enviado");
         } else {
             // Cedula incorrecta, no existe el afiliado
@@ -139,9 +135,9 @@ public class ControladorGestionUsuarios {
         String contrasena = (String) loginData.get("passwordToSend");
         String cedula = (String) loginData.get("cedula");
 
-        if (codigo.equals(CODIGO_GENERADO_RP)) {
+        if (codigo.equals(usuarioService.CODIGO_GENERADO_RP)) {
             usuarioService.cambiarContrasena(contrasena, cedula);
-            CODIGO_GENERADO_RP = "";
+            usuarioService.CODIGO_GENERADO_RP = "";
             return ResponseEntity.ok("Contraseña Cambiada con éxito");
         } else {
             // Código digitado incorrecto
@@ -152,30 +148,6 @@ public class ControladorGestionUsuarios {
     @GetMapping("/gestion/login/IJUP")
     public List<Object[]> listarUsuariosYPacientes(String cedula){
         return usuarioService.obtenerUsuariosYPacientes(cedula);
-    }
-
-    public int generarCodigoVerificacion(int cantDigitos) {
-        if (cantDigitos < 1) {
-            throw new IllegalArgumentException("El número de dígitos debe ser al menos 1.");
-        }
-
-        int min = (int) Math.pow(10, cantDigitos - 1); // Mínimo valor posible
-        int max = (int) Math.pow(10, cantDigitos) - 1; // Máximo valor posible
-
-        Random random = new Random();
-        int codigoVerificacion = random.nextInt(max - min + 1) + min;
-        CODIGO_GENERADO_RP = String.valueOf(codigoVerificacion);
-        return codigoVerificacion;
-    }
-
-    public void enviarCorreoCV(String correoDestino, int codigoVerificacion) throws MessagingException {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("jclinica0@gmail.com");
-        message.setTo(correoDestino);
-        message.setSubject("Código de Verificación");
-        message.setText("Digite este código en el formulario para continuar con su cambio de contraseña: \n\n" + codigoVerificacion
-                + "\n\nRespetado afiliado, este correo ha sido generado por un sistema de envío; por favor NO responda al mismo ya que no podrá ser gestionado.");
-        mailSender.send(message);
     }
 
     //----------------------------------------------------------------------------------------------

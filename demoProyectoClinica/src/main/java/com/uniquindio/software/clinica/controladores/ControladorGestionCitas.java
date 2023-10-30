@@ -24,8 +24,6 @@ public class ControladorGestionCitas {
     @Autowired
     private CitaServiceImpl citaService;
     @Autowired
-    private MedicoServiceImpl medicoService;
-    @Autowired
     private MedicoHasJornadaImpl medicoHasJornadaService;
 
     @PostMapping("/gestion")
@@ -44,6 +42,7 @@ public class ControladorGestionCitas {
         String motivo = (String) datosCita.get("motivo");
 
         Cita cita = new Cita(fechaCreacion, horaCreacion, fechaCita, horaCita, cedula_medico, cedula_paciente, estado, motivo);
+        citaService.enviarCorreoAvisoMedico(cita);
         return citaService.guardar(cita);
     }
 
