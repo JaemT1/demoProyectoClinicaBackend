@@ -1,6 +1,8 @@
 package com.uniquindio.software.clinica.modelo;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +13,7 @@ import lombok.EqualsAndHashCode;
 public class Atencion {
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idAtencion;
     private int idCita;
     private String sintomas;

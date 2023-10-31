@@ -1,6 +1,5 @@
 package com.uniquindio.software.clinica.servicios.implementaciones;
 
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,12 +31,13 @@ import com.uniquindio.software.clinica.modelo.Paciente;
 import com.uniquindio.software.clinica.modelo.Usuario;
 import com.uniquindio.software.clinica.repositorios.ICitaDao;
 import com.uniquindio.software.clinica.repositorios.IPacienteDao;
-import com.uniquindio.software.clinica.servicios.CitaServicio;
+import com.uniquindio.software.clinica.servicios.CitaService;
 
 @Service
-public class CitaServiceImpl implements CitaServicio {
+public class CitaServiceImpl implements CitaService {
 
-
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*
     @Autowired
     public ICitaDao citaRepo;
     @Autowired
@@ -95,11 +95,15 @@ public class CitaServiceImpl implements CitaServicio {
     }   
 
 
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ */
+
+
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
     private ICitaDao citaDao;
-
     @Autowired
     private UsuarioServiceImpl usuarioServiceImpl;
 
@@ -114,16 +118,16 @@ public class CitaServiceImpl implements CitaServicio {
     public void eliminar(Cita cita) {citaDao.delete(cita);}
     
     @Transactional(readOnly = true)
-
     public Cita buscarPorId(int id) throws Exception {return citaDao.findById(id).orElseThrow(() -> new Exception("No existe la cita con el id: " + id));}
 
-
-    
-
     @Transactional(readOnly = true)
-    public List<Cita> findByFechaCita(Date fecha_cita) {
-        return citaDao.findByFechaCita(fecha_cita);
-    }
+    public List<Cita> findByFechaCita(Date fecha_cita) {return citaDao.findByFechaCita(fecha_cita);}
+
+    @Override
+    public List<Cita> obtenerCitasProximas() {return citaDao.obtenerCitasProximas();}
+
+    @Override
+    public List<Cita> obtenerCitasAnteriores() {return citaDao.obtenerCitasAnteriores();}
 
     public void enviarCorreoAvisoMedico(Cita cita) {
         String nombreUsuario = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaPaciente());
@@ -137,8 +141,4 @@ public class CitaServiceImpl implements CitaServicio {
                         + "Hora: " + cita.getHoraCita().toString());
         mailSender.send(message);
     }
-
-
-
-
 }

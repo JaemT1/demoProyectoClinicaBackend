@@ -34,7 +34,7 @@ public class ControladorGestionCitas {
         Time horaCreacion = new Time(currentTimeMillis);
 
         Date fechaCita = Date.valueOf((String) datosCita.get("fecha_cita"));
-        Time horaCita = Time.valueOf((String) datosCita.get("hora_cita"));
+        Time horaCita = Time.valueOf(datosCita.get("hora_cita")+":00");
 
         String cedula_medico = (String) datosCita.get("cedula_medico");
         String cedula_paciente = (String) datosCita.get("cedula_paciente");
@@ -68,5 +68,9 @@ public class ControladorGestionCitas {
         return citaService.listarCitas();
     }
 
+    @GetMapping("/gestion/citasProximas")
+    public List<Cita> obtenerCitasProximas() {return citaService.obtenerCitasProximas(); }
 
+    @GetMapping("/gestion/citasAnteriores")
+    public List<Cita> obtenerCitasAnteriores() {return citaService.obtenerCitasAnteriores(); }
 }
