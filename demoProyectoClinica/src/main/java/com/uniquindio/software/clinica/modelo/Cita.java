@@ -3,15 +3,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalTime;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
 @Data
 @Entity
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Cita {
     @Id
@@ -27,6 +30,8 @@ public class Cita {
     private String estado;
     private String motivo;
 
+
+    
     public Cita(Date fechaCreacion, Time horaCreacion, Date fechaCita, Time horaCita, String cedulaMedico, String cedulaPaciente, String estado, String motivo) {
         this.fechaCreacion = fechaCreacion;
         this.horaCreacion = horaCreacion;
@@ -41,4 +46,5 @@ public class Cita {
     public Cita() {
 
     }
+
 }

@@ -38,3 +38,12 @@ out/
 
 ### Springboot ###
 !**/src/main/resources/application.properties
+
+#tests
+./bin/main/dataset.sql
+./src/main/resources/dataset.sql
+./bin/test/com/uniquindio/software/clinica/test/ListarPacientesTest.class
+./src/test/java/com/uniquindio/software/clinica/test/ListarPacientesTest.java
+./bin/test/com/uniquindio/software/clinica/test/EnvioDeCorreoTest.class
+./src/test/java/com/uniquindio/software/clinica/test/EnvioDeCorreoTest.java
+
