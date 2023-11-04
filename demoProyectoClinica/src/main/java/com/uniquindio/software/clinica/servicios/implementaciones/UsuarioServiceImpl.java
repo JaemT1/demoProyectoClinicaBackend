@@ -31,9 +31,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private IUsuarioDao usuarioDao;
-
     @Autowired
-    private JavaMailSender mailSender;
+    private CorreoServiceImpl correoService;
 
     @Override
     @Transactional
@@ -124,12 +123,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     public void enviarCorreoCV(String correoDestino, int codigoVerificacion) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("jclinica0@gmail.com");
-        message.setTo(correoDestino);
-        message.setSubject("Código de Verificación");
-        message.setText("Digite este código en el formulario para continuar con su cambio de contraseña: \n\n" + codigoVerificacion
-                + "\n\nRespetado afiliado, este correo ha sido generado por un sistema de envío; por favor NO responda al mismo ya que no podrá ser gestionado.");
-        mailSender.send(message);
+        String contenido = "Digite este código en el formulario para continuar con su cambio de contraseña: \n\n" + codigoVerificacion
+                + "\n\nRespetado afiliado, este correo ha sido generado por un sistema de envío; por favor NO responda al mismo ya que no podrá ser gestionado.";
+        correoService.enviarEmail("Código de Verificación", contenido, correoDestino);
     }
 }

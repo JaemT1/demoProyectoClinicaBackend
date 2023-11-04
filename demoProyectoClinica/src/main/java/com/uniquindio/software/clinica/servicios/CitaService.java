@@ -12,6 +12,6 @@ public interface CitaService {
     void eliminar(Cita cita);
     Cita buscarPorId(int id)throws Exception;
     List<Cita> findByFechaCita(Date fecha_cita);
-    List<Cita> obtenerCitasProximas();
-    List<Cita> obtenerCitasAnteriores();
+    List<Cita> obtenerCitasProximasPacienteEsp(String cedula_paciente);
+    List<Cita> obtenerCitasAnteriores(String cedula_paciente);
 }

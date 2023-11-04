@@ -1,15 +1,8 @@
 package com.uniquindio.software.clinica.servicios.implementaciones;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.chrono.IsoChronology;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.logging.Logger;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,96 +10,23 @@ import org.springframework.stereotype.Service;
 import com.uniquindio.software.clinica.modelo.Cita;
 import com.uniquindio.software.clinica.repositorios.ICitaDao;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
-import com.uniquindio.software.clinica.modelo.Cita;
-import com.uniquindio.software.clinica.modelo.Paciente;
-import com.uniquindio.software.clinica.modelo.Usuario;
-import com.uniquindio.software.clinica.repositorios.ICitaDao;
-import com.uniquindio.software.clinica.repositorios.IPacienteDao;
 import com.uniquindio.software.clinica.servicios.CitaService;
 
 @Service
 public class CitaServiceImpl implements CitaService {
 
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-/*
-    @Autowired
-    public ICitaDao citaRepo;
-    @Autowired
-    public IPacienteDao pacienteDao;
-    @Autowired
-    public CorreoServicio correoServicio;
-    @Autowired
-    public UsuarioServiceImpl usuarioService;
-
-    BufferedWriter bufferedWriter;
-    FileWriter fileWriter;
-
-    @Override
-    public ArrayList<Cita> listarCitasProximas( Date fecha, Integer diasPrevios) {
-        ArrayList<Cita> listaCitas = new ArrayList<Cita>();
-
-        Iterable<Cita> citas = citaRepo.findAll();
-        Iterator<Cita> citaIterator = citas.iterator();
-        Cita cita;
-        while( citaIterator.hasNext()) {
-            cita =  citaIterator.next();
-            if ( cita.getFechaCita().getTime() - fecha.getTime()  < diasPrevios * 24 * 3600 * 1000L ) {
-                listaCitas.add(cita);
-            }
-        }
-        return listaCitas;
-    }
-
-    @Override
-    @Scheduled(cron = "0 0 * * * *")
-    public void enviarCorreosRecordatorio() {
-        
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        this.listarCitasProximas(new Date(System.currentTimeMillis()), 3).forEach(
-            cita -> {
-                 try {
-                    
-                    Usuario usuario = usuarioService.buscarPorCedula( cita.getCedulaPaciente() );
-                    correoServicio.enviarEmail("Recordatorio cita", 
-                                               String.format(
-                                                            "Reciba una cordial saludo %s.<br><br> la presente es para recordale"+
-                                                            " su proxima cita el dia <strong>%s</strong>, a la(s) <strong>%s</strong>, recuerde que debe"+
-                                                            " llegar 20 minutos antes y traer su orden. <br><br>Que tenga buen dia.", 
-                                                            usuario.getNombre(), 
-                                                            simpleDateFormat.format( cita.getFechaCita() ), cita.getHoraCita() ), 
-                                               usuario.getEmail());
-        
-        } catch (Exception excp) {
-            excp.printStackTrace();
-        }
-            }
-        );
-
-    }   
-
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
- */
-
-
-    @Autowired
-    private JavaMailSender mailSender;
     @Autowired
     private ICitaDao citaDao;
     @Autowired
     private UsuarioServiceImpl usuarioServiceImpl;
-
+    @Autowired
+    private CorreoServiceImpl correoService;
 
     @Transactional(readOnly = true)
     public List<Cita> listarCitas() {return (ArrayList<Cita>) citaDao.findAll();}
@@ -124,21 +44,44 @@ public class CitaServiceImpl implements CitaService {
     public List<Cita> findByFechaCita(Date fecha_cita) {return citaDao.findByFechaCita(fecha_cita);}
 
     @Override
-    public List<Cita> obtenerCitasProximas() {return citaDao.obtenerCitasProximas();}
+    public List<Cita> obtenerCitasProximasPacienteEsp(String cedula_paciente) {return citaDao.obtenerCitasProximasPacienteEsp(cedula_paciente);}
 
     @Override
-    public List<Cita> obtenerCitasAnteriores() {return citaDao.obtenerCitasAnteriores();}
+    public List<Cita> obtenerCitasAnteriores(String cedula_paciente) {return citaDao.obtenerCitasAnteriores(cedula_paciente);}
 
     public void enviarCorreoAvisoMedico(Cita cita) {
         String nombreUsuario = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaPaciente());
         String correoDestino = usuarioServiceImpl.obtenerCorreoRP(cita.getCedulaMedico());
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("jclinica0@gmail.com");
-        message.setTo(correoDestino);
-        message.setSubject("Nueva Cita Agendada");
-        message.setText("El afiliado " + nombreUsuario + " con cédula " + cita.getCedulaPaciente() + " ha agendado una cita con usted \n"
-                        + "Fecha: " + cita.getFechaCita().toString() + "\n"
-                        + "Hora: " + cita.getHoraCita().toString());
-        mailSender.send(message);
+        String contenido = "El afiliado " + nombreUsuario + " con cédula " + cita.getCedulaPaciente() + " ha agendado una cita con usted \n"
+                + "Fecha: " + cita.getFechaCita().toString() + "\n"
+                + "Hora: " + cita.getHoraCita().toString();
+        correoService.enviarEmail("Nueva Cita Agendada", contenido, correoDestino);
+    }
+
+    @Scheduled(cron = "0 0 12 * * *") // Se ejecutará a mediodia cada día
+    @Scheduled(fixedRate = 5000)  //Se ejecuta cada 5 segundos a partir de la ejecución anterior
+    public void verificarCita() {
+        List<Cita> citasProximas = citaDao.obtenerCitasProximas();
+        LocalDate fechaActual = LocalDate.now();
+
+        for (Cita cita: citasProximas) {
+            Date fechaCitaBD = cita.getFechaCita();
+            LocalDate fechaCita = fechaCitaBD.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            long diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaCita);
+
+            if (diasRestantes == 2){
+                String nombreUsuario = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaPaciente());
+                String nombreMedico = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaMedico());
+                String correoDestino = usuarioServiceImpl.obtenerCorreoRP(cita.getCedulaMedico());
+                String contenido = "Te recordamos que tenemos una cita programada, \n te entregamos nuevamente toda la información que necesitas para asistir \n"
+                                    + "Nombre del Afiliado: " + nombreUsuario + "\n"
+                                    + "Profesional a cargo: " + nombreMedico + "\n"
+                                    + "Fecha de la cita: " + cita.getFechaCita().toString() + "\n"
+                                    + "Hora de la cita: " + cita.getHoraCita().toString() + "\n"
+                                    + "Recuerda llegar 20 minutos antes de la hora programada";
+                correoService.enviarEmail("Clínica San Gabriel Te Recuerda Tu Cita", contenido, correoDestino);
+            }
+        }
+
     }
 }

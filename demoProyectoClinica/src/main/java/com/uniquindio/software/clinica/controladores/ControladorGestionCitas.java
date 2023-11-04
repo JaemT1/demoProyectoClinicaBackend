@@ -64,13 +64,11 @@ public class ControladorGestionCitas {
     }
 
     @GetMapping("/gestion")
-    public List<Cita> listarUsuarios() {
-        return citaService.listarCitas();
-    }
+    public List<Cita> listarUsuarios() {return citaService.listarCitas();}
 
     @GetMapping("/gestion/citasProximas")
-    public List<Cita> obtenerCitasProximas() {return citaService.obtenerCitasProximas(); }
+    public List<Cita> obtenerCitasProximas(@RequestBody Map<String, Object> cedula) {return citaService.obtenerCitasProximasPacienteEsp((String)cedula.get("cedula")); }
 
     @GetMapping("/gestion/citasAnteriores")
-    public List<Cita> obtenerCitasAnteriores() {return citaService.obtenerCitasAnteriores(); }
+    public List<Cita> obtenerCitasAnteriores(@RequestBody Map<String, Object> cedula) {return citaService.obtenerCitasAnteriores((String)cedula.get("cedula"));}
 }

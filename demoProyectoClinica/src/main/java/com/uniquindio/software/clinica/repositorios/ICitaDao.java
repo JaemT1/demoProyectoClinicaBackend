@@ -12,10 +12,13 @@ import org.springframework.stereotype.Repository;
 public interface ICitaDao extends CrudRepository<Cita, Integer> {
     List<Cita> findByFechaCita(Date fecha_cita);
 
-    @Query("SELECT c FROM Cita c WHERE c.estado = 'Agendada' ")
+    @Query("SELECT c FROM Cita c WHERE c.estado = 'Agendada' AND c.cedulaPaciente = ?1")
+    List<Cita> obtenerCitasProximasPacienteEsp(String cedula_paciente);
+
+    @Query("SELECT c FROM Cita c WHERE c.estado = 'Agendada'")
     List<Cita> obtenerCitasProximas();
 
-    @Query("SELECT c FROM Cita c WHERE c.estado = 'Cancelada' OR c.estado = 'Completada' ")
-    List<Cita> obtenerCitasAnteriores();
+    @Query("SELECT c FROM Cita c WHERE c.estado = 'Cancelada' OR c.estado = 'Completada' AND c.cedulaPaciente = ?1")
+    List<Cita> obtenerCitasAnteriores(String cedula_paciente);
 
 }
