@@ -28,25 +28,32 @@ public class CitaServiceImpl implements CitaService {
     @Autowired
     private CorreoServiceImpl correoService;
 
+    @Override
     @Transactional(readOnly = true)
     public List<Cita> listarCitas() {return (ArrayList<Cita>) citaDao.findAll();}
-    
+
+    @Override
     @Transactional
     public Cita guardar(Cita cita) {return citaDao.save(cita);}
-    
+
+    @Override
     @Transactional
     public void eliminar(Cita cita) {citaDao.delete(cita);}
-    
+
+    @Override
     @Transactional(readOnly = true)
     public Cita buscarPorId(int id) throws Exception {return citaDao.findById(id).orElseThrow(() -> new Exception("No existe la cita con el id: " + id));}
 
+    @Override
     @Transactional(readOnly = true)
     public List<Cita> findByFechaCita(Date fecha_cita) {return citaDao.findByFechaCita(fecha_cita);}
 
     @Override
+    @Transactional(readOnly = true)
     public List<Cita> obtenerCitasProximasPacienteEsp(String cedula_paciente) {return citaDao.obtenerCitasProximasPacienteEsp(cedula_paciente);}
 
     @Override
+    @Transactional(readOnly = true)
     public List<Cita> obtenerCitasAnteriores(String cedula_paciente) {return citaDao.obtenerCitasAnteriores(cedula_paciente);}
 
     public void enviarCorreoAvisoMedico(Cita cita) {
@@ -59,29 +66,28 @@ public class CitaServiceImpl implements CitaService {
     }
 
     @Scheduled(cron = "0 0 12 * * *") // Se ejecutará a mediodia cada día
-    @Scheduled(fixedRate = 5000)  //Se ejecuta cada 5 segundos a partir de la ejecución anterior
+    //@Scheduled(fixedRate = 60000)  //Se ejecuta cada minuto a partir de la ejecución anterior (Para realizar pruebas)
     public void verificarCita() {
         List<Cita> citasProximas = citaDao.obtenerCitasProximas();
         LocalDate fechaActual = LocalDate.now();
 
         for (Cita cita: citasProximas) {
             Date fechaCitaBD = cita.getFechaCita();
-            LocalDate fechaCita = fechaCitaBD.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate fechaCita = LocalDate.parse(fechaCitaBD.toString());
             long diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaCita);
 
             if (diasRestantes == 2){
                 String nombreUsuario = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaPaciente());
                 String nombreMedico = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaMedico());
                 String correoDestino = usuarioServiceImpl.obtenerCorreoRP(cita.getCedulaMedico());
-                String contenido = "Te recordamos que tenemos una cita programada, \n te entregamos nuevamente toda la información que necesitas para asistir \n"
+                String contenido = "Te recordamos que tenemos una cita programada, \nte entregamos nuevamente toda la información que necesitas para asistir: \n"
                                     + "Nombre del Afiliado: " + nombreUsuario + "\n"
                                     + "Profesional a cargo: " + nombreMedico + "\n"
                                     + "Fecha de la cita: " + cita.getFechaCita().toString() + "\n"
                                     + "Hora de la cita: " + cita.getHoraCita().toString() + "\n"
-                                    + "Recuerda llegar 20 minutos antes de la hora programada";
+                                    + "Recuerda llegar 20 minutos antes de la hora programada.";
                 correoService.enviarEmail("Clínica San Gabriel Te Recuerda Tu Cita", contenido, correoDestino);
             }
         }
-
     }
 }

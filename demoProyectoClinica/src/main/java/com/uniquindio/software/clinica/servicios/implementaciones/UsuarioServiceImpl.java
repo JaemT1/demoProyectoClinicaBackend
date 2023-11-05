@@ -88,6 +88,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String obtenerNombreUsuario(String cedula) {return usuarioDao.obtenerNombreUsuario(cedula);}
 
     @Override
@@ -95,7 +96,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void cambiarContrasena(String newPassword, String cedula) {usuarioDao.cambiarContrasena(newPassword, cedula);}
 
     @Override
-    @Transactional()
+    @Transactional
     public void editarUsuario(String email, String telefono, String url_foto, String cedula) {usuarioDao.editarUsuario(email,telefono,url_foto,cedula);}
 
     public boolean verificarContrasenaMedPac(String cedula, String contrasenaAVerificar) {
@@ -112,10 +113,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (cantDigitos < 1) {
             throw new IllegalArgumentException("El número de dígitos debe ser al menos 1.");
         }
-
         int min = (int) Math.pow(10, cantDigitos - 1); // Mínimo valor posible
         int max = (int) Math.pow(10, cantDigitos) - 1; // Máximo valor posible
-
         Random random = new Random();
         int codigoVerificacion = random.nextInt(max - min + 1) + min;
         CODIGO_GENERADO_RP = String.valueOf(codigoVerificacion);

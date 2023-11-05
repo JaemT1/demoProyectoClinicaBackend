@@ -30,8 +30,6 @@ public class Cita {
     private String estado;
     private String motivo;
 
-
-    
     public Cita(Date fechaCreacion, Time horaCreacion, Date fechaCita, Time horaCita, String cedulaMedico, String cedulaPaciente, String estado, String motivo) {
         this.fechaCreacion = fechaCreacion;
         this.horaCreacion = horaCreacion;

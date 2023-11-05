@@ -18,6 +18,17 @@ public class Atencion {
     private int idCita;
     private String sintomas;
     private String diagnostico;
-    private String notaMedicas;
-    private int idTratamiento;
+    private String notasMedicas;
+    private String tratamiento;
+
+    public Atencion() {
+    }
+
+    public Atencion(int idCita, String sintomas, String diagnostico, String notasMedicas, String tratamiento) {
+        this.idCita = idCita;
+        this.sintomas = sintomas;
+        this.diagnostico = diagnostico;
+        this.notasMedicas = notasMedicas;
+        this.tratamiento = tratamiento;
+    }
 }
