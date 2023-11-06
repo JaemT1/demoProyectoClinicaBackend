@@ -1,15 +1,10 @@
 package com.uniquindio.software.clinica.controladores;
 
 import com.uniquindio.software.clinica.modelo.Atencion;
-import com.uniquindio.software.clinica.modelo.Cita;
-import com.uniquindio.software.clinica.modelo.Usuario;
 import com.uniquindio.software.clinica.servicios.implementaciones.AtencionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 import java.util.Map;
 
@@ -27,4 +22,13 @@ public class ControladorGestionAtenciones {
     @GetMapping("/gestion")
     public List<Atencion> listarAtenciones() {return atencionService.listarAtenciones();}
 
+    @GetMapping("/gestion/atencionesPorMedico")
+    public List<Atencion> listarAtencionesPorMedico(@RequestBody Map<String, Object> cedulaMedico) {
+        return atencionService.obtenerAtencionesPorMedico((String)cedulaMedico.get("cedula_medico"));
+    }
+
+    @GetMapping("/gestion/atencionesPorPaciente")
+    public List<Atencion> listarAtencionesPorPaciente(@RequestBody Map<String, Object> cedulaPaciente) {
+        return atencionService.obtenerAtencionesPorPaciente((String)cedulaPaciente.get("cedula_paciente"));
+    }
 }

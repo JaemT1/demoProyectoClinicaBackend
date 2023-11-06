@@ -14,4 +14,5 @@ public interface CitaService {
     List<Cita> findByFechaCita(Date fecha_cita);
     List<Cita> obtenerCitasProximasPacienteEsp(String cedula_paciente);
     List<Cita> obtenerCitasAnteriores(String cedula_paciente);
+    void cambiarEstado(String estado, int id);
 }

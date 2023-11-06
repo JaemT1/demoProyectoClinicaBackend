@@ -10,4 +10,7 @@ public interface AtencionService {
     Atencion guardar(Atencion atencion);
     void eliminar(Atencion atencion);
     Atencion buscarPorId(int id)throws Exception;
+    List<Atencion> obtenerAtencionesPorMedico(String cedulaMedico);
+    List<Atencion> obtenerAtencionesPorPaciente(String cedulaPaciente);
+
 }

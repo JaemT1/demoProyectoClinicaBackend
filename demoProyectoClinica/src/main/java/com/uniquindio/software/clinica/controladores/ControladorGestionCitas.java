@@ -71,4 +71,10 @@ public class ControladorGestionCitas {
 
     @GetMapping("/gestion/citasAnteriores")
     public List<Cita> obtenerCitasAnteriores(@RequestBody Map<String, Object> cedula) {return citaService.obtenerCitasAnteriores((String)cedula.get("cedula"));}
+
+    @PostMapping("/gestion/cambiarEstadoCita")
+    public void cambiarEstadoCita(@RequestBody Map<String, Object> datos){
+        int idCita = (Integer)datos.get("id_cita");
+        citaService.cambiarEstado("Completada", idCita);
+    }
 }

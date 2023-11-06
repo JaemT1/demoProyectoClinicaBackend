@@ -34,4 +34,12 @@ public class AtencionServiceImpl implements AtencionService {
     @Override
     @Transactional(readOnly = true)
     public Atencion buscarPorId(int id) throws Exception {return atencionDao.findById(id).orElseThrow(() -> new Exception("No existe la atención con el id: " + id));}
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Atencion> obtenerAtencionesPorMedico(String cedulaMedico) {return atencionDao.obtenerAtencionesPorMedico(cedulaMedico);}
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Atencion> obtenerAtencionesPorPaciente(String cedulaPaciente) {return atencionDao.obtenerAtencionesPorPaciente(cedulaPaciente);}
 }

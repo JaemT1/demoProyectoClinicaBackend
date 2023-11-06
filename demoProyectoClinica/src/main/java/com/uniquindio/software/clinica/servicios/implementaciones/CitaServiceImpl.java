@@ -56,6 +56,10 @@ public class CitaServiceImpl implements CitaService {
     @Transactional(readOnly = true)
     public List<Cita> obtenerCitasAnteriores(String cedula_paciente) {return citaDao.obtenerCitasAnteriores(cedula_paciente);}
 
+    @Override
+    @Transactional()
+    public void cambiarEstado(String estado, int id) {citaDao.cambiarEstado(estado, id);}
+
     public void enviarCorreoAvisoMedico(Cita cita) {
         String nombreUsuario = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaPaciente());
         String correoDestino = usuarioServiceImpl.obtenerCorreoRP(cita.getCedulaMedico());
@@ -79,7 +83,7 @@ public class CitaServiceImpl implements CitaService {
             if (diasRestantes == 2){
                 String nombreUsuario = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaPaciente());
                 String nombreMedico = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaMedico());
-                String correoDestino = usuarioServiceImpl.obtenerCorreoRP(cita.getCedulaMedico());
+                String correoDestino = usuarioServiceImpl.obtenerCorreoRP(cita.getCedulaPaciente());
                 String contenido = "Te recordamos que tenemos una cita programada, \nte entregamos nuevamente toda la información que necesitas para asistir: \n"
                                     + "Nombre del Afiliado: " + nombreUsuario + "\n"
                                     + "Profesional a cargo: " + nombreMedico + "\n"
