@@ -16,6 +16,9 @@ public interface ICitaDao extends CrudRepository<Cita, Integer> {
     @Query("SELECT c FROM Cita c WHERE c.estado = 'Agendada' AND c.cedulaPaciente = ?1")
     List<Cita> obtenerCitasProximasPacienteEsp(String cedula_paciente);
 
+    @Query("SELECT c FROM Cita c WHERE c.estado = 'Agendada' AND c.cedulaMedico = ?1")
+    List<Cita> obtenerCitasProximasMedicoEsp(String cedula_medico);
+
     @Query("SELECT c FROM Cita c WHERE c.estado = 'Agendada'")
     List<Cita> obtenerCitasProximas();
 

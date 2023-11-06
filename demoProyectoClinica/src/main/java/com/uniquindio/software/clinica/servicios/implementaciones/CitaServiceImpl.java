@@ -60,6 +60,12 @@ public class CitaServiceImpl implements CitaService {
     @Transactional()
     public void cambiarEstado(String estado, int id) {citaDao.cambiarEstado(estado, id);}
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Cita> obtenerCitasProximasMedicoEsp(String cedula_medico) {
+        return citaDao.obtenerCitasProximasMedicoEsp(cedula_medico);
+    }
+
     public void enviarCorreoAvisoMedico(Cita cita) {
         String nombreUsuario = usuarioServiceImpl.obtenerNombreUsuario(cita.getCedulaPaciente());
         String correoDestino = usuarioServiceImpl.obtenerCorreoRP(cita.getCedulaMedico());

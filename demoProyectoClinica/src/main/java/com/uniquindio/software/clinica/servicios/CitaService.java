@@ -15,4 +15,5 @@ public interface CitaService {
     List<Cita> obtenerCitasProximasPacienteEsp(String cedula_paciente);
     List<Cita> obtenerCitasAnteriores(String cedula_paciente);
     void cambiarEstado(String estado, int id);
+    List<Cita> obtenerCitasProximasMedicoEsp(String cedula_medico);
 }
