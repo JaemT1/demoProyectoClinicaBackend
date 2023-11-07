@@ -122,8 +122,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     public void enviarCorreoCV(String correoDestino, int codigoVerificacion) {
-        String contenido = "Digite este código en el formulario para continuar con su cambio de contraseña: \n\n" + codigoVerificacion
-                + "\n\nRespetado afiliado, este correo ha sido generado por un sistema de envío; por favor NO responda al mismo ya que no podrá ser gestionado.";
+        String contenido = "<html>" +
+                "<body>" +
+                "<p>Digite este código en el formulario para continuar con su cambio de contraseña:</p>" +
+                "<p><strong>" + codigoVerificacion + "</strong></p>" +
+                "<p>Respetado afiliado, este correo ha sido generado por un sistema de envío; por favor <strong>NO</strong> responda al mismo ya que no podrá ser gestionado.</p>" +
+                "</body>" +
+                "</html>";
         correoService.enviarEmail("Código de Verificación", contenido, correoDestino);
     }
 }
