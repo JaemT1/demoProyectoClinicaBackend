@@ -57,7 +57,7 @@ public class CitaServiceImpl implements CitaService {
     public List<Cita> obtenerCitasAnteriores(String cedula_paciente) {return citaDao.obtenerCitasAnteriores(cedula_paciente);}
 
     @Override
-    @Transactional()
+    @Transactional
     public void cambiarEstado(String estado, int id) {citaDao.cambiarEstado(estado, id);}
 
     @Override

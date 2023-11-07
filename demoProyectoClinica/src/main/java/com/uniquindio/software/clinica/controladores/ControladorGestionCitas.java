@@ -80,4 +80,9 @@ public class ControladorGestionCitas {
         int idCita = (Integer)datos.get("id_cita");
         citaService.cambiarEstado("Completada", idCita);
     }
+
+    @PostMapping("/gestion/cancelarCita")
+    public void cancelarCita(@RequestParam int idCita){
+        citaService.cambiarEstado("Cancelada", idCita);
+    }
 }
