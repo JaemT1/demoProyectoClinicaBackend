@@ -97,7 +97,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public void editarUsuario(String email, String telefono, String url_foto, String cedula) {usuarioDao.editarUsuario(email,telefono,url_foto,cedula);}
+    public void editarUsuario(String email, String telefono, String cedula) {usuarioDao.editarUsuario(email,telefono,cedula);}
 
     public boolean verificarContrasenaMedPac(String cedula, String contrasenaAVerificar) {
         String storedPasswordHash = usuarioDao.obtenerContrasenaMedPac(cedula);

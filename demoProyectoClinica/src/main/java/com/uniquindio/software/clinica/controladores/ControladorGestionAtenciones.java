@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/atenciones")
@@ -23,12 +22,12 @@ public class ControladorGestionAtenciones {
     public List<Atencion> listarAtenciones() {return atencionService.listarAtenciones();}
 
     @GetMapping("/gestion/atencionesPorMedico")
-    public List<Atencion> listarAtencionesPorMedico(@RequestBody Map<String, Object> cedulaMedico) {
-        return atencionService.obtenerAtencionesPorMedico((String)cedulaMedico.get("cedula_medico"));
+    public List<Atencion> listarAtencionesPorMedico(@RequestParam String cedula_medico) {
+        return atencionService.obtenerAtencionesPorMedico(cedula_medico);
     }
 
     @GetMapping("/gestion/atencionesPorPaciente")
-    public List<Atencion> listarAtencionesPorPaciente(@RequestBody Map<String, Object> cedulaPaciente) {
-        return atencionService.obtenerAtencionesPorPaciente((String)cedulaPaciente.get("cedula_paciente"));
+    public List<Atencion> listarAtencionesPorPaciente(@RequestParam String cedula_paciente) {
+        return atencionService.obtenerAtencionesPorPaciente(cedula_paciente);
     }
 }

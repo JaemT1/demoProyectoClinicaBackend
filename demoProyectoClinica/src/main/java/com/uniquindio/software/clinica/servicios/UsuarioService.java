@@ -15,5 +15,5 @@ public interface UsuarioService {
     String obtenerCorreoRP(String cedula);
     String obtenerNombreUsuario(String cedula);
     void cambiarContrasena(String newPassword, String cedula);
-    void editarUsuario(String email, String telefono, String url_foto, String cedula);
+    void editarUsuario(String email, String telefono, String cedula);
 }

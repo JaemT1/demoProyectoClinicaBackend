@@ -48,17 +48,13 @@ public class ControladorGestionUsuarios {
         return ResponseEntity.ok(usuario);
     }
 
-    @PutMapping("/gestion/editarPaciente")
+    @PutMapping("/gestion/editarUsuario")
     public ResponseEntity<String>actualizarUsuario(@RequestBody Map<String, Object> detallesAEditar) throws Exception {
         String email = (String)detallesAEditar.get("email");
-        String telefono = (String)detallesAEditar.get("telefono");
-        String url_foto = (String)detallesAEditar.get("url_foto");
-        String alergias = (String)detallesAEditar.get("alergias");
-        String eps = (String)detallesAEditar.get("eps");
         String cedula = (String)detallesAEditar.get("cedula");
+        String telefono = (String)detallesAEditar.get("telefono");
 
-        usuarioService.editarUsuario(email, telefono, url_foto, cedula);
-        pacienteService.editarPaciente(alergias, eps, cedula);
+        usuarioService.editarUsuario(email, telefono, cedula);
 
         return ResponseEntity.ok("Usuario Actualizado");
     }
